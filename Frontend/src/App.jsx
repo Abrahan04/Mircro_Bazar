@@ -1,13 +1,24 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useState, createContext, useContext } from 'react'
+
+// Páginas Públicas
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 
+// Páginas Admin
+import AdminDashboard from './pages/Dashboard'
+import Productos from './pages/admin/Productos'
+import Categorias from './pages/admin/Categorias'
+import Clientes from './pages/admin/Clientes'
+import Proveedores from './pages/admin/Proveedores'
+import Ventas from './pages/admin/Ventas'
+import Compras from './pages/admin/Compras'
+import Reportes from './pages/admin/Reportes'
+
 // Contexto de autenticación
 export const AuthContext = createContext()
-
 export const useAuth = () => useContext(AuthContext)
 
 function App() {
@@ -94,10 +105,25 @@ function App() {
     }}>
       <BrowserRouter>
         <Routes>
+          {/* Rutas Públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
+          
+          {/* Dashboard Cliente */}
           <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+
+          {/* Rutas Admin - Solo accesibles si hay usuario logueado */}
+          <Route path="/admin/dashboard" element={user ? <AdminDashboard /> : <Navigate to="/login" />} />
+          <Route path="/admin/productos" element={user ? <Productos /> : <Navigate to="/login" />} />
+          <Route path="/admin/categorias" element={user ? <Categorias /> : <Navigate to="/login" />} />
+          <Route path="/admin/clientes" element={user ? <Clientes /> : <Navigate to="/login" />} />
+          <Route path="/admin/proveedores" element={user ? <Proveedores /> : <Navigate to="/login" />} />
+          <Route path="/admin/ventas" element={user ? <Ventas /> : <Navigate to="/login" />} />
+          <Route path="/admin/compras" element={user ? <Compras /> : <Navigate to="/login" />} />
+          <Route path="/admin/reportes" element={user ? <Reportes /> : <Navigate to="/login" />} />
+
+          {/* Ruta 404 */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
