@@ -80,12 +80,12 @@ function Home() {
             <div className="flex items-center justify-center mb-4">
               <Sparkles className="w-8 h-8 mr-2 animate-bounce-slow" />
               <h1 className="text-6xl font-bold">
-                ¡Bienvenido de nuevo, Invitado!
+                ¡Bienvenido!
               </h1>
               <Sparkles className="w-8 h-8 ml-2 animate-bounce-slow" />
             </div>
             <p className="text-xl opacity-90 mt-4">
-              Tu centro para micro-transacciones y productos increíbles
+              Tu centro de productos increíbles
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <div className="flex items-center space-x-2 bg-white bg-opacity-20 px-6 py-3 rounded-xl backdrop-blur-sm">

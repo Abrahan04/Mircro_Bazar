@@ -14,15 +14,15 @@ function CartModal({ isOpen, onClose }) {
       return
     }
 
-    const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '593999999999'
-    let message = '🛒 *Nuevo Pedido - Micro Bazar AbrahanIsaias*\n\n'
-    message += '*Productos:*\n'
+    const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '593939929655'
+    let message = 'Nuevo Pedido - Micro Bazar AbrahanIsaias\n\n'
+    message += 'Productos:\n'
     
     cart.forEach(item => {
       message += `• ${item.cantidad}x ${item.nombre_producto} - $${(item.precio_venta * item.cantidad).toFixed(2)}\n`
     })
     
-    message += `\n*Total: $${total.toFixed(2)}*\n\n`
+    message += `\nTotal: $${total.toFixed(2)}\n\n`
     message += '¿Pueden confirmar disponibilidad y tiempo de entrega?'
     
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
