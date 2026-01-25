@@ -93,3 +93,4 @@ Panel Administrativo
 - **Gestión de Ventas:** Registrar y consultar ventas
 - **Gestión de Compras:** Registrar y consultar compras
 - **Reportes:** Análisis de ventas, productos más vendidos, bajo stock, etc.
+
