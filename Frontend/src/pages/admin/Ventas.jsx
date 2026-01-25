@@ -14,6 +14,8 @@ function Ventas() {
   const [clienteSeleccionado, setClienteSeleccionado] = useState('')
   const [metodoPago, setMetodoPago] = useState('efectivo')
   const [descuento, setDescuento] = useState(0)
+  const [fechaInicio, setFechaInicio] = useState('')
+  const [fechaFin, setFechaFin] = useState('')
 
   useEffect(() => {
     cargarVentas()
@@ -67,7 +69,7 @@ function Ventas() {
       setCarritoVenta([...carritoVenta, {
         id_producto: producto.id_producto,
         nombre_producto: producto.nombre_producto,
-        precio_unitario: producto.precio_venta,
+        precio_unitario: parseFloat(producto.precio_venta),
         cantidad: cantidad
       }])
     }
@@ -82,7 +84,14 @@ function Ventas() {
     const token = localStorage.getItem('token')
     
     try {
-      await axios.post(`${API_URL}/ventas`, {
+      console.log('📤 Enviando venta:', {
+        id_cliente: clienteSeleccionado || null,
+        productos: carritoVenta,
+        descuento: parseFloat(descuento),
+        metodo_pago: metodoPago
+      })
+
+      const response = await axios.post(`${API_URL}/ventas`, {
         id_cliente: clienteSeleccionado || null,
         productos: carritoVenta,
         descuento: parseFloat(descuento),
@@ -92,19 +101,37 @@ function Ventas() {
         headers: { Authorization: `Bearer ${token}` }
       })
       
+      console.log('✅ Respuesta del servidor:', response.data)
       alert('✅ Venta registrada exitosamente')
       setShowModal(false)
       setCarritoVenta([])
       setDescuento(0)
+      setClienteSeleccionado('')
       cargarVentas()
       cargarProductos()
     } catch (error) {
-      alert('❌ Error: ' + (error.response?.data?.message || 'Error al registrar venta'))
+      console.error('❌ Error completo:', error)
+      console.error('❌ Respuesta del error:', error.response?.data)
+      alert('❌ Error: ' + (error.response?.data?.message || error.message || 'Error al registrar venta'))
     }
   }
 
   const subtotal = carritoVenta.reduce((sum, item) => sum + (item.precio_unitario * item.cantidad), 0)
   const total = subtotal - parseFloat(descuento || 0)
+
+  // Filtrar ventas por rango de fechas
+  const ventasFiltradas = ventas.filter(v => {
+    if (!fechaInicio && !fechaFin) return true
+    
+    const fechaVenta = new Date(v.fecha_venta)
+    const inicio = fechaInicio ? new Date(fechaInicio) : new Date('1900-01-01')
+    const fin = fechaFin ? new Date(fechaFin) : new Date('2099-12-31')
+    
+    // Ajustar fin a las 23:59:59
+    fin.setHours(23, 59, 59, 999)
+    
+    return fechaVenta >= inicio && fechaVenta <= fin
+  })
 
   return (
     <AdminLayout>
@@ -120,6 +147,47 @@ function Ventas() {
           </button>
         </div>
 
+        {/* Filtro de Fechas */}
+        <div className="bg-white rounded-xl shadow-lg p-4 mb-6">
+          <h3 className="font-bold mb-4">Filtrar por Rango de Fechas</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2">Fecha Inicio</label>
+              <input
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2">Fecha Fin</label>
+              <input
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div className="flex items-end">
+              <button
+                onClick={() => {
+                  setFechaInicio('')
+                  setFechaFin('')
+                }}
+                className="w-full bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold transition"
+              >
+                Limpiar Filtro
+              </button>
+            </div>
+          </div>
+          {(fechaInicio || fechaFin) && (
+            <p className="text-sm text-gray-600 mt-2">
+              Mostrando ventas de {fechaInicio || 'inicio'} a {fechaFin || 'hoy'}
+            </p>
+          )}
+        </div>
+
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <table className="w-full">
             <thead className="bg-gradient-to-r from-primary to-secondary text-white">
@@ -133,20 +201,28 @@ function Ventas() {
               </tr>
             </thead>
             <tbody>
-              {ventas.map(v => (
-                <tr key={v.id_venta} className="border-t hover:bg-gray-50">
-                  <td className="px-6 py-4 font-semibold">{v.numero_venta}</td>
-                  <td className="px-6 py-4">{v.nombre_cliente || 'Cliente General'}</td>
-                  <td className="px-6 py-4">{new Date(v.fecha_venta).toLocaleString()}</td>
-                  <td className="px-6 py-4 text-green-600 font-bold">${parseFloat(v.total_venta).toFixed(2)}</td>
-                  <td className="px-6 py-4">{v.metodo_pago}</td>
-                  <td className="px-6 py-4">
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                      {v.estado}
-                    </span>
+              {ventasFiltradas.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="text-center py-8 text-gray-500">
+                    No hay ventas en el rango de fechas seleccionado
                   </td>
                 </tr>
-              ))}
+              ) : (
+                ventasFiltradas.map(v => (
+                  <tr key={v.id_venta} className="border-t hover:bg-gray-50">
+                    <td className="px-6 py-4 font-semibold">{v.numero_venta}</td>
+                    <td className="px-6 py-4">{v.nombre_cliente || 'Cliente General'}</td>
+                    <td className="px-6 py-4">{new Date(v.fecha_venta).toLocaleString()}</td>
+                    <td className="px-6 py-4 text-green-600 font-bold">${parseFloat(v.total_venta).toFixed(2)}</td>
+                    <td className="px-6 py-4">{v.metodo_pago}</td>
+                    <td className="px-6 py-4">
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                        {v.estado}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

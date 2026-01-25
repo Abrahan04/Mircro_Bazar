@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Plus } from 'lucide-react'
+import { Plus, Edit, Trash2 } from 'lucide-react'
 import AdminLayout from '../../components/AdminLayout'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 function Categorias() {
   const [categorias, setCategorias] = useState([])
   const [nombre, setNombre] = useState('')
+  const [editando, setEditando] = useState(null)
 
   useEffect(() => {
     cargarCategorias()
@@ -26,15 +27,53 @@ function Categorias() {
     e.preventDefault()
     try {
       const token = localStorage.getItem('token')
-      await axios.post(`${API_URL}/categorias`, 
-        { nombre_categoria: nombre, descripcion: '' },
-        { headers: { Authorization: `Bearer ${token}` }}
-      )
-      alert('✅ Categoría creada')
+      
+      if (editando) {
+        // Actualizar categoría
+        await axios.put(`${API_URL}/categorias/${editando.id_categoria}`, 
+          { nombre_categoria: nombre, descripcion: '' },
+          { headers: { Authorization: `Bearer ${token}` }}
+        )
+        alert('✅ Categoría actualizada')
+        setEditando(null)
+      } else {
+        // Crear nueva categoría
+        await axios.post(`${API_URL}/categorias`, 
+          { nombre_categoria: nombre, descripcion: '' },
+          { headers: { Authorization: `Bearer ${token}` }}
+        )
+        alert('✅ Categoría creada')
+      }
+      
       setNombre('')
       cargarCategorias()
     } catch (error) {
-      alert('❌ Error al crear categoría')
+      alert('❌ Error: ' + (error.response?.data?.message || 'Error al guardar categoría'))
+    }
+  }
+
+  const abrirEditar = (categoria) => {
+    setEditando(categoria)
+    setNombre(categoria.nombre_categoria)
+  }
+
+  const cancelarEdicion = () => {
+    setEditando(null)
+    setNombre('')
+  }
+
+  const eliminarCategoria = async (id) => {
+    if (!window.confirm('¿Deseas eliminar esta categoría?')) return
+
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(`${API_URL}/categorias/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      alert('✅ Categoría eliminada')
+      cargarCategorias()
+    } catch (error) {
+      alert('❌ Error: ' + (error.response?.data?.message || 'Error al eliminar'))
     }
   }
 
@@ -47,7 +86,9 @@ function Categorias() {
           {/* Formulario */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4">Nueva Categoría</h3>
+              <h3 className="text-xl font-bold mb-4">
+                {editando ? 'Editar Categoría' : 'Nueva Categoría'}
+              </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold mb-2">Nombre *</label>
@@ -65,8 +106,17 @@ function Categorias() {
                   className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold hover:shadow-xl transition flex items-center justify-center space-x-2"
                 >
                   <Plus className="w-5 h-5" />
-                  <span>Agregar Categoría</span>
+                  <span>{editando ? 'Actualizar Categoría' : 'Agregar Categoría'}</span>
                 </button>
+                {editando && (
+                  <button
+                    type="button"
+                    onClick={cancelarEdicion}
+                    className="w-full bg-gray-400 hover:bg-gray-500 text-white py-3 rounded-lg font-semibold transition"
+                  >
+                    Cancelar
+                  </button>
+                )}
               </form>
             </div>
           </div>
@@ -81,6 +131,7 @@ function Categorias() {
                     <th className="px-6 py-4 text-left">Nombre</th>
                     <th className="px-6 py-4 text-left">Estado</th>
                     <th className="px-6 py-4 text-left">Fecha</th>
+                    <th className="px-6 py-4 text-left">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -95,6 +146,24 @@ function Categorias() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
                         {new Date(c.fecha_creacion).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => abrirEditar(c)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition"
+                            title="Editar categoría"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => eliminarCategoria(c.id_categoria)}
+                            className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition"
+                            title="Eliminar categoría"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

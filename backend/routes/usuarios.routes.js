@@ -12,6 +12,7 @@ const verificarRol = require('../middlewares/verificarRol');
 
 // Rutas públicas
 router.post('/login', login);
+router.post('/', registrarUsuario); // Ruta pública para que nuevos usuarios se registren
 
 // Rutas protegidas (requieren autenticación)
 router.get('/', verificarToken, verificarRol(['administrador']), obtenerUsuarios);

@@ -12,6 +12,8 @@ function Compras() {
   const [showModal, setShowModal] = useState(false)
   const [carritoCompra, setCarritoCompra] = useState([])
   const [proveedorSeleccionado, setProveedorSeleccionado] = useState('')
+  const [productoCantidades, setProductoCantidades] = useState({})
+  const [productoPreciosCompra, setProductoPreciosCompra] = useState({})
 
   useEffect(() => {
     cargarCompras()
@@ -53,20 +55,22 @@ function Compras() {
   }
 
   const agregarProductoCompra = (producto, cantidad, precioUnitario) => {
+    const cantidadNum = parseInt(cantidad) || 1
+    const precioNum = parseFloat(precioUnitario) || parseFloat(producto.precio_compra)
     const existe = carritoCompra.find(item => item.id_producto === producto.id_producto)
     
     if (existe) {
       setCarritoCompra(carritoCompra.map(item =>
         item.id_producto === producto.id_producto
-          ? { ...item, cantidad: item.cantidad + cantidad, precio_unitario: precioUnitario }
+          ? { ...item, cantidad: item.cantidad + cantidadNum, precio_unitario: precioNum }
           : item
       ))
     } else {
       setCarritoCompra([...carritoCompra, {
         id_producto: producto.id_producto,
         nombre_producto: producto.nombre_producto,
-        precio_unitario: precioUnitario,
-        cantidad: cantidad
+        precio_unitario: precioNum,
+        cantidad: cantidadNum
       }])
     }
   }
@@ -84,7 +88,13 @@ function Compras() {
     const token = localStorage.getItem('token')
     
     try {
-      await axios.post(`${API_URL}/compras`, {
+      console.log('📤 Enviando compra:', {
+        id_proveedor: parseInt(proveedorSeleccionado),
+        productos: carritoCompra,
+        observaciones: 'Compra registrada desde panel admin'
+      })
+
+      const response = await axios.post(`${API_URL}/compras`, {
         id_proveedor: parseInt(proveedorSeleccionado),
         productos: carritoCompra,
         observaciones: 'Compra registrada desde panel admin'
@@ -92,13 +102,19 @@ function Compras() {
         headers: { Authorization: `Bearer ${token}` }
       })
       
+      console.log('✅ Respuesta del servidor:', response.data)
       alert('✅ Compra registrada. El stock se ha actualizado automáticamente.')
       setShowModal(false)
       setCarritoCompra([])
+      setProveedorSeleccionado('')
+      setProductoCantidades({})
+      setProductoPreciosCompra({})
       cargarCompras()
       cargarProductos()
     } catch (error) {
-      alert('❌ Error: ' + (error.response?.data?.message || 'Error al registrar compra'))
+      console.error('❌ Error completo:', error)
+      console.error('❌ Respuesta del error:', error.response?.data)
+      alert('❌ Error: ' + (error.response?.data?.message || error.message || 'Error al registrar compra'))
     }
   }
 
@@ -169,38 +185,33 @@ function Compras() {
                 <div>
                   <h3 className="font-bold mb-2">Seleccionar Productos</h3>
                   <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-2">
-                    {productos.map(p => {
-                      const [cantidad, setCantidad] = useState(1)
-                      const [precio, setPrecio] = useState(p.precio_compra)
-                      
-                      return (
-                        <div key={p.id_producto} className="p-3 border-2 rounded-lg">
-                          <p className="font-semibold text-sm">{p.nombre_producto}</p>
-                          <input
-                            type="number"
-                            placeholder="Cantidad"
-                            min="1"
-                            defaultValue="1"
-                            onChange={(e) => setCantidad(parseInt(e.target.value))}
-                            className="w-full px-2 py-1 border rounded mt-1 text-sm"
-                          />
-                          <input
-                            type="number"
-                            placeholder="Precio"
-                            step="0.01"
-                            defaultValue={p.precio_compra}
-                            onChange={(e) => setPrecio(parseFloat(e.target.value))}
-                            className="w-full px-2 py-1 border rounded mt-1 text-sm"
-                          />
-                          <button
-                            onClick={() => agregarProductoCompra(p, cantidad, precio)}
-                            className="w-full bg-primary text-white py-1 rounded mt-1 text-sm hover:bg-secondary transition"
-                          >
-                            Agregar
-                          </button>
-                        </div>
-                      )
-                    })}
+                    {productos.map(p => (
+                      <div key={p.id_producto} className="p-3 border-2 rounded-lg">
+                        <p className="font-semibold text-sm">{p.nombre_producto}</p>
+                        <input
+                          type="number"
+                          placeholder="Cantidad"
+                          min="1"
+                          defaultValue="1"
+                          onChange={(e) => setProductoCantidades({...productoCantidades, [p.id_producto]: e.target.value})}
+                          className="w-full px-2 py-1 border rounded mt-1 text-sm"
+                        />
+                        <input
+                          type="number"
+                          placeholder="Precio"
+                          step="0.01"
+                          defaultValue={p.precio_compra}
+                          onChange={(e) => setProductoPreciosCompra({...productoPreciosCompra, [p.id_producto]: e.target.value})}
+                          className="w-full px-2 py-1 border rounded mt-1 text-sm"
+                        />
+                        <button
+                          onClick={() => agregarProductoCompra(p, productoCantidades[p.id_producto], productoPreciosCompra[p.id_producto])}
+                          className="w-full bg-primary text-white py-1 rounded mt-1 text-sm hover:bg-secondary transition"
+                        >
+                          Agregar
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

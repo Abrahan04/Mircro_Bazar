@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Plus, Edit, Trash2, Search, Package } from 'lucide-react'
+import { Plus, Edit, Trash2, Search, Package, Upload, X } from 'lucide-react'
 import AdminLayout from '../../components/AdminLayout'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
@@ -11,6 +11,7 @@ function Productos() {
   const [showModal, setShowModal] = useState(false)
   const [editando, setEditando] = useState(null)
   const [busqueda, setBusqueda] = useState('')
+  const [imagenPreview, setImagenPreview] = useState(null)
   const [formData, setFormData] = useState({
     codigo_producto: '',
     nombre_producto: '',
@@ -53,21 +54,59 @@ function Productos() {
     const token = localStorage.getItem('token')
 
     try {
+      // Usar FormData para enviar archivo
+      const data = new FormData()
+      data.append('codigo_producto', formData.codigo_producto)
+      data.append('nombre_producto', formData.nombre_producto)
+      data.append('descripcion', formData.descripcion)
+      data.append('id_categoria', formData.id_categoria)
+      data.append('precio_compra', formData.precio_compra)
+      data.append('precio_venta', formData.precio_venta)
+      data.append('stock_actual', formData.stock_actual)
+      data.append('stock_minimo', formData.stock_minimo)
+      
+      // Agregar imagen si existe
+      if (imagenPreview && imagenPreview.file) {
+        data.append('imagen', imagenPreview.file)
+      }
+
       if (editando) {
-        await axios.put(`${API_URL}/productos/${editando.id_producto}`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
+        await axios.put(`${API_URL}/productos/${editando.id_producto}`, data, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
         })
         alert('✅ Producto actualizado')
       } else {
-        await axios.post(`${API_URL}/productos`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
+        await axios.post(`${API_URL}/productos`, data, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
         })
         alert('✅ Producto creado')
       }
       cerrarModal()
       cargarProductos()
     } catch (error) {
-      alert('❌ Error: ' + (error.response?.data?.message || 'Error al guardar'))
+      console.error('Error completo:', error)
+      alert('❌ Error: ' + (error.response?.data?.message || error.message || 'Error al guardar'))
+    }
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      // Crear preview
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagenPreview({
+          preview: reader.result,
+          file: file
+        })
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -83,6 +122,7 @@ function Productos() {
       stock_actual: 0,
       stock_minimo: 5
     })
+    setImagenPreview(null)
     setShowModal(true)
   }
 
@@ -98,12 +138,14 @@ function Productos() {
       stock_actual: producto.stock_actual,
       stock_minimo: producto.stock_minimo
     })
+    setImagenPreview(null)
     setShowModal(true)
   }
 
   const cerrarModal = () => {
     setShowModal(false)
     setEditando(null)
+    setImagenPreview(null)
   }
 
   const eliminarProducto = async (id) => {
@@ -270,6 +312,35 @@ function Productos() {
                     rows="3"
                     className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Imagen del Producto</label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                    />
+                  </div>
+                  
+                  {imagenPreview && (
+                    <div className="mt-4 relative">
+                      <img 
+                        src={imagenPreview.preview} 
+                        alt="Preview" 
+                        className="max-h-40 rounded-lg mx-auto"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setImagenPreview(null)}
+                        className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full hover:bg-red-700 transition"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

@@ -20,9 +20,17 @@ function ProductCard({ product }) {
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover animate-fade-in group">
       {/* Imagen del producto */}
       <div className="relative h-56 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center overflow-hidden">
-        <span className="text-7xl transform group-hover:scale-110 transition-transform duration-300">
-          📦
-        </span>
+        {product.imagen_url ? (
+          <img 
+            src={`http://localhost:3000${product.imagen_url}`}
+            alt={product.nombre_producto}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+        ) : (
+          <span className="text-7xl transform group-hover:scale-110 transition-transform duration-300">
+            📦
+          </span>
+        )}
         
         {/* Badge de stock */}
         <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${

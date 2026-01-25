@@ -27,7 +27,8 @@ function Login() {
 
       if (response.data.success) {
         login(response.data.usuario, response.data.token)
-        navigate('/')
+        // Redireccionar a la página de redirección que verificará el rol
+        navigate('/auth-redirect')
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Error al iniciar sesión')

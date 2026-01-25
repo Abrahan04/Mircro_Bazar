@@ -6,9 +6,10 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import AuthRedirect from './pages/AuthRedirect'
 
 // Páginas Admin
-import AdminDashboard from './pages/Dashboard'
+import AdminDashboard from './pages/admin/Dashboard'
 import Productos from './pages/admin/Productos'
 import Categorias from './pages/admin/Categorias'
 import Clientes from './pages/admin/Clientes'
@@ -16,6 +17,9 @@ import Proveedores from './pages/admin/Proveedores'
 import Ventas from './pages/admin/Ventas'
 import Compras from './pages/admin/Compras'
 import Reportes from './pages/admin/Reportes'
+
+// Componentes
+import ProtectedRoute from './components/ProtectedRoute'
 
 // Contexto de autenticación
 export const AuthContext = createContext()
@@ -107,24 +111,27 @@ function App() {
         <Routes>
           {/* Rutas Públicas */}
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-          <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
+          <Route path="/login" element={
+            user ? (user.rol === 'administrador' ? <Navigate to="/admin/dashboard" replace /> : <Navigate to="/dashboard" replace />) : <Login />
+          } />
+          <Route path="/register" element={user ? <Navigate to="/dashboard" replace /> : <Register />} />
+          <Route path="/auth-redirect" element={<AuthRedirect />} />
           
           {/* Dashboard Cliente */}
-          <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" replace />} />
 
-          {/* Rutas Admin - Solo accesibles si hay usuario logueado */}
-          <Route path="/admin/dashboard" element={user ? <AdminDashboard /> : <Navigate to="/login" />} />
-          <Route path="/admin/productos" element={user ? <Productos /> : <Navigate to="/login" />} />
-          <Route path="/admin/categorias" element={user ? <Categorias /> : <Navigate to="/login" />} />
-          <Route path="/admin/clientes" element={user ? <Clientes /> : <Navigate to="/login" />} />
-          <Route path="/admin/proveedores" element={user ? <Proveedores /> : <Navigate to="/login" />} />
-          <Route path="/admin/ventas" element={user ? <Ventas /> : <Navigate to="/login" />} />
-          <Route path="/admin/compras" element={user ? <Compras /> : <Navigate to="/login" />} />
-          <Route path="/admin/reportes" element={user ? <Reportes /> : <Navigate to="/login" />} />
+          {/* Rutas Admin - Solo accesibles si hay usuario logueado Y es administrador */}
+          <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/productos" element={<ProtectedRoute><Productos /></ProtectedRoute>} />
+          <Route path="/admin/categorias" element={<ProtectedRoute><Categorias /></ProtectedRoute>} />
+          <Route path="/admin/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
+          <Route path="/admin/proveedores" element={<ProtectedRoute><Proveedores /></ProtectedRoute>} />
+          <Route path="/admin/ventas" element={<ProtectedRoute><Ventas /></ProtectedRoute>} />
+          <Route path="/admin/compras" element={<ProtectedRoute><Compras /></ProtectedRoute>} />
+          <Route path="/admin/reportes" element={<ProtectedRoute><Reportes /></ProtectedRoute>} />
 
-          {/* Ruta 404 */}
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* Ruta 404 - Al final */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>

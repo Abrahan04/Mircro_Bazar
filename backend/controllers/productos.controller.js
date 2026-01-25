@@ -1,4 +1,6 @@
 const pool = require('../database/db');
+const fs = require('fs');
+const path = require('path');
 
 // Obtener todos los productos
 const obtenerProductos = async (req, res) => {
@@ -66,8 +68,7 @@ const crearProducto = async (req, res) => {
         precio_compra, 
         precio_venta, 
         stock_actual, 
-        stock_minimo, 
-        imagen_url 
+        stock_minimo
     } = req.body;
     
     try {
@@ -77,6 +78,12 @@ const crearProducto = async (req, res) => {
                 success: false,
                 message: 'Campos obligatorios incompletos' 
             });
+        }
+        
+        // Obtener ruta de la imagen si existe
+        let imagen_url = null;
+        if (req.file) {
+            imagen_url = `/uploads/${req.file.filename}`;
         }
         
         const result = await pool.query(
@@ -113,11 +120,16 @@ const actualizarProducto = async (req, res) => {
         precio_compra, 
         precio_venta, 
         stock_actual, 
-        stock_minimo, 
-        imagen_url 
+        stock_minimo
     } = req.body;
     
     try {
+        // Si hay imagen nueva, obtener su ruta
+        let imagen_url = req.body.imagen_url || null; // Usar imagen anterior si no hay nueva
+        if (req.file) {
+            imagen_url = `/uploads/${req.file.filename}`;
+        }
+        
         const result = await pool.query(
             `UPDATE productos 
              SET codigo_producto = $1, nombre_producto = $2, descripcion = $3, 
@@ -154,17 +166,33 @@ const eliminarProducto = async (req, res) => {
     const { id } = req.params;
     
     try {
-        const result = await pool.query(
-            'UPDATE productos SET estado = false WHERE id_producto = $1 RETURNING *',
+        // Obtener producto para conocer la imagen
+        const productoResult = await pool.query(
+            'SELECT imagen_url FROM productos WHERE id_producto = $1',
             [id]
         );
         
-        if (result.rows.length === 0) {
+        if (productoResult.rows.length === 0) {
             return res.status(404).json({ 
                 success: false,
                 message: 'Producto no encontrado' 
             });
         }
+        
+        // Eliminar imagen si existe
+        const { imagen_url } = productoResult.rows[0];
+        if (imagen_url) {
+            const filePath = path.join(__dirname, '..', imagen_url);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+        
+        // Actualizar estado del producto
+        const result = await pool.query(
+            'UPDATE productos SET estado = false WHERE id_producto = $1 RETURNING *',
+            [id]
+        );
         
         res.json({
             success: true,
