@@ -17,15 +17,16 @@ Micro_Bazar/
 ```
 
 Configurar variables de entorno:
-Crear archivo `.env` con:
+Crear archivo `.env` en la raz del backend con:
 ```
+JWT_SECRET=tu_clave_secreta_super_segura_12345
 PORT=3000
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=microbazar_abrahanisaias
+DB_NAME=micro_bazar_Abrahan_Isaias_db
 DB_USER=postgres
-DB_PASSWORD=tu_password
-JWT_SECRET=tu_secreto_seguro
+DB_PASSWORD=12345
+
  
 Crear la base de datos en PostgreSQL (ejecutar el script SQL proporcionado)
 
@@ -37,10 +38,10 @@ npm run dev
 
 Instalar dependencias:
 ```bash
-npm install
 npm init -y (package.jason)
 npm install express pg dotenv cors bcryptjs jsonwebtoken (Node.js, conector de PostgreSQL, leer variables de entorno (.env), permitir peticiones desde el frontend,Encriptar contraseñas, autenticación con tokens JWT)
 npm install --save-dev nodemon (Reiniciar servidor automáticamente)
+npm install multer
 
 Tecnologias utilizadas 
 se utilzo JavaScript, específicamente usando Node.js con el framework Express.
