@@ -94,3 +94,6 @@ Panel Administrativo
 - **Gestión de Compras:** Registrar y consultar compras
 - **Reportes:** Análisis de ventas, productos más vendidos, bajo stock, etc.
 
+Credenciales para entrar como administrador
+correo: admin123@abrahansaias.com
+contraseña: admin123
