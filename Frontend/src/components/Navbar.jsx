@@ -17,11 +17,11 @@ function Navbar() {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3 group">
-              <div className="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
+              <div className="w-12 h-12 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
                 <ShoppingCart className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] bg-clip-text text-transparent">
                   Micro Bazar
                 </h1>
                 <p className="text-xs text-gray-500">AbrahanIsaias</p>
@@ -30,13 +30,13 @@ function Navbar() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6">
-              <Link to="/" className="text-gray-700 hover:text-primary transition font-medium">
+              <Link to="/" className="text-gray-700 hover:text-[#8B5CF6] transition font-medium">
                 Inicio
               </Link>
               
               {user ? (
                 <>
-                  <Link to="/dashboard" className="text-gray-700 hover:text-primary transition font-medium">
+                  <Link to="/dashboard" className="text-gray-700 hover:text-[#8B5CF6] transition font-medium">
                     Mi Cuenta
                   </Link>
                   <button
@@ -51,14 +51,14 @@ function Navbar() {
                 <>
                   <Link 
                     to="/login" 
-                    className="flex items-center space-x-2 text-gray-700 hover:text-primary transition font-medium"
+                    className="flex items-center space-x-2 text-gray-700 hover:text-[#8B5CF6] transition font-medium"
                   >
                     <User className="w-4 h-4" />
                     <span>Iniciar Sesión</span>
                   </Link>
                   <Link 
                     to="/register" 
-                    className="flex items-center space-x-2 bg-gradient-to-r from-primary to-secondary text-white px-5 py-2 rounded-lg hover:shadow-lg transition-all duration-300"
+                    className="flex items-center space-x-2 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-5 py-2 rounded-lg hover:shadow-lg transition-all duration-300"
                   >
                     <UserPlus className="w-4 h-4" />
                     <span>Registrarse</span>

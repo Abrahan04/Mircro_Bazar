@@ -60,7 +60,7 @@ function Reportes() {
         {/* Ventas Diarias */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
           <div className="flex items-center space-x-3 mb-4">
-            <TrendingUp className="w-8 h-8 text-primary" />
+            <TrendingUp className="w-8 h-8 text-[#8B5CF6]" />
             <h2 className="text-2xl font-bold">Ventas Diarias (Últimos 30 días)</h2>
           </div>
           <div className="overflow-x-auto">
@@ -90,7 +90,7 @@ function Reportes() {
         {/* Productos Más Vendidos */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
           <div className="flex items-center space-x-3 mb-4">
-            <Package className="w-8 h-8 text-primary" />
+            <Package className="w-8 h-8 text-[#8B5CF6]" />
             <h2 className="text-2xl font-bold">Productos Más Vendidos</h2>
           </div>
           <div className="overflow-x-auto">
@@ -120,7 +120,7 @@ function Reportes() {
         {/* Búsqueda por Fecha */}
         <div className="bg-white rounded-xl shadow-lg p-6">
           <div className="flex items-center space-x-3 mb-4">
-            <DollarSign className="w-8 h-8 text-primary" />
+            <DollarSign className="w-8 h-8 text-[#8B5CF6]" />
             <h2 className="text-2xl font-bold">Ventas por Rango de Fechas</h2>
           </div>
           <div className="flex gap-4 mb-4">
@@ -138,7 +138,7 @@ function Reportes() {
             />
             <button
               onClick={buscarPorFecha}
-              className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-2 rounded-lg font-semibold hover:shadow-xl transition"
+              className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-6 py-2 rounded-lg font-semibold hover:shadow-xl transition"
             >
               Buscar
             </button>

@@ -4,6 +4,7 @@ import { Plus, Edit, Trash2, Search, Package, Upload, X } from 'lucide-react'
 import AdminLayout from '../../components/AdminLayout'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const BASE_URL = API_URL.replace('/api', '') // URL base para cargar imágenes (http://localhost:3000)
 
 function Productos() {
   const [productos, setProductos] = useState([])
@@ -68,6 +69,9 @@ function Productos() {
       // Agregar imagen si existe
       if (imagenPreview && imagenPreview.file) {
         data.append('imagen', imagenPreview.file)
+      } else if (editando && editando.imagen_url) {
+        // IMPORTANTE: Si editamos y no cambiamos la imagen, enviamos la URL anterior para no perderla
+        data.append('imagen_url', editando.imagen_url)
       }
 
       if (editando) {
@@ -138,7 +142,16 @@ function Productos() {
       stock_actual: producto.stock_actual,
       stock_minimo: producto.stock_minimo
     })
-    setImagenPreview(null)
+    
+    // Si el producto tiene imagen, la mostramos en el preview
+    if (producto.imagen_url) {
+      setImagenPreview({
+        preview: `${BASE_URL}${producto.imagen_url}`,
+        file: null
+      })
+    } else {
+      setImagenPreview(null)
+    }
     setShowModal(true)
   }
 
@@ -179,7 +192,7 @@ function Productos() {
           </div>
           <button
             onClick={abrirModalNuevo}
-            className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
+            className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
           >
             <Plus className="w-5 h-5" />
             <span>Nuevo Producto</span>
@@ -195,7 +208,7 @@ function Productos() {
               placeholder="Buscar producto..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
             />
           </div>
         </div>
@@ -204,9 +217,10 @@ function Productos() {
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-primary to-secondary text-white">
+              <thead className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white">
                 <tr>
                   <th className="px-6 py-4 text-left">Código</th>
+                  <th className="px-6 py-4 text-left">Imagen</th>
                   <th className="px-6 py-4 text-left">Producto</th>
                   <th className="px-6 py-4 text-left">Categoría</th>
                   <th className="px-6 py-4 text-left">P. Compra</th>
@@ -219,6 +233,19 @@ function Productos() {
                 {productosFiltrados.map(p => (
                   <tr key={p.id_producto} className="border-t hover:bg-gray-50 transition">
                     <td className="px-6 py-4 text-sm">{p.codigo_producto}</td>
+                    <td className="px-6 py-4">
+                      {p.imagen_url ? (
+                        <img 
+                          src={`${BASE_URL}${p.imagen_url}`} 
+                          alt={p.nombre_producto} 
+                          className="w-12 h-12 object-contain bg-white rounded-lg border border-gray-200"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                          <Package className="w-6 h-6 text-gray-400" />
+                        </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4 font-semibold">{p.nombre_producto}</td>
                     <td className="px-6 py-4 text-sm">{p.nombre_categoria}</td>
                     <td className="px-6 py-4 text-sm">${parseFloat(p.precio_compra).toFixed(2)}</td>
@@ -259,7 +286,7 @@ function Productos() {
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="gradient-bg p-6 text-white">
+              <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] p-6 text-white">
                 <h2 className="text-2xl font-bold">
                   {editando ? 'Editar Producto' : 'Nuevo Producto'}
                 </h2>
@@ -274,7 +301,7 @@ function Productos() {
                       value={formData.codigo_producto}
                       onChange={(e) => setFormData({...formData, codigo_producto: e.target.value})}
                       required
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -283,7 +310,7 @@ function Productos() {
                       value={formData.id_categoria}
                       onChange={(e) => setFormData({...formData, id_categoria: e.target.value})}
                       required
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     >
                       <option value="">Seleccionar</option>
                       {categorias.map(c => (
@@ -300,7 +327,7 @@ function Productos() {
                     value={formData.nombre_producto}
                     onChange={(e) => setFormData({...formData, nombre_producto: e.target.value})}
                     required
-                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                   />
                 </div>
 
@@ -310,7 +337,7 @@ function Productos() {
                     value={formData.descripcion}
                     onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
                     rows="3"
-                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                   />
                 </div>
 
@@ -321,7 +348,7 @@ function Productos() {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
                   </div>
                   
@@ -330,7 +357,7 @@ function Productos() {
                       <img 
                         src={imagenPreview.preview} 
                         alt="Preview" 
-                        className="max-h-40 rounded-lg mx-auto"
+                        className="h-40 w-full object-contain bg-white rounded-lg mx-auto border border-gray-200"
                       />
                       <button
                         type="button"
@@ -352,7 +379,7 @@ function Productos() {
                       value={formData.precio_compra}
                       onChange={(e) => setFormData({...formData, precio_compra: e.target.value})}
                       required
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -363,7 +390,7 @@ function Productos() {
                       value={formData.precio_venta}
                       onChange={(e) => setFormData({...formData, precio_venta: e.target.value})}
                       required
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -376,7 +403,7 @@ function Productos() {
                       value={formData.stock_actual}
                       onChange={(e) => setFormData({...formData, stock_actual: e.target.value})}
                       required
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -386,7 +413,7 @@ function Productos() {
                       value={formData.stock_minimo}
                       onChange={(e) => setFormData({...formData, stock_minimo: e.target.value})}
                       required
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -401,7 +428,7 @@ function Productos() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold hover:shadow-xl transition"
+                    className="flex-1 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white py-3 rounded-lg font-semibold hover:shadow-xl transition"
                   >
                     Guardar
                   </button>

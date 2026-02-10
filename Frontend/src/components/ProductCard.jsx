@@ -19,17 +19,19 @@ function ProductCard({ product }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover animate-fade-in group">
       {/* Imagen del producto */}
-      <div className="relative h-56 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center overflow-hidden">
+      <div className="relative h-56 bg-white flex items-center justify-center overflow-hidden border-b border-gray-100">
         {product.imagen_url ? (
           <img 
             src={`http://localhost:3000${product.imagen_url}`}
             alt={product.nombre_producto}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300"
           />
         ) : (
-          <span className="text-7xl transform group-hover:scale-110 transition-transform duration-300">
-            📦
-          </span>
+          <div className="w-full h-full flex items-center justify-center bg-gray-50">
+            <span className="text-7xl transform group-hover:scale-110 transition-transform duration-300 opacity-30">
+              📦
+            </span>
+          </div>
         )}
         
         {/* Badge de stock */}
@@ -44,7 +46,7 @@ function ProductCard({ product }) {
 
       {/* Contenido */}
       <div className="p-5">
-        <p className="text-xs text-primary font-semibold mb-1">
+        <p className="text-xs text-[#8B5CF6] font-semibold mb-1">
           {product.nombre_categoria || 'Sin categoría'}
         </p>
         <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">
@@ -69,12 +71,12 @@ function ProductCard({ product }) {
             max={product.stock_actual}
             value={quantity}
             onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-            className="w-20 px-3 py-2 border-2 border-gray-200 rounded-lg text-center focus:border-primary focus:outline-none"
+            className="w-20 px-3 py-2 border-2 border-gray-200 rounded-lg text-center focus:border-[#8B5CF6] focus:outline-none"
           />
           <button
             onClick={handleAddToCart}
             disabled={product.stock_actual === 0}
-            className="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-2 rounded-lg font-semibold hover:shadow-xl transition-all duration-300 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="flex-1 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white py-2 rounded-lg font-semibold hover:shadow-xl transition-all duration-300 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             <ShoppingCart className="w-5 h-5" />
             <span>{product.stock_actual > 0 ? 'Agregar' : 'Agotado'}</span>

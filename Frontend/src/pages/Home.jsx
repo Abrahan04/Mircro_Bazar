@@ -69,7 +69,7 @@ function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="gradient-bg text-white py-20 relative overflow-hidden">
+      <section className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white py-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -116,12 +116,12 @@ function Home() {
                 placeholder="Buscar productos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none text-lg"
+                className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-[#8B5CF6] focus:outline-none text-lg"
               />
             </div>
             <button 
               onClick={() => setSearchTerm('')}
-              className="px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-xl transition-all duration-300"
+              className="px-8 py-4 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white rounded-xl font-semibold hover:shadow-xl transition-all duration-300"
             >
               Limpiar
             </button>
@@ -154,7 +154,7 @@ function Home() {
         )}
 
         {selectedCategory && (
-          <div className="mb-8 p-4 bg-gradient-to-r from-primary to-secondary text-white rounded-xl shadow-lg animate-slide-in">
+          <div className="mb-8 p-4 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white rounded-xl shadow-lg animate-slide-in">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-bold">
@@ -208,7 +208,7 @@ function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] bg-clip-text text-transparent">
             Micro Bazar AbrahanIsaias
           </h3>
           <p className="text-gray-400 mb-6">
@@ -219,7 +219,7 @@ function Home() {
               &copy; 2025 Micro Bazar AbrahanIsaias - Todos los derechos reservados
             </p>
             <p className="text-sm text-gray-500 mt-2">
-              Desarrollado por <span className="text-primary font-semibold">Jeremy Masabanda</span>
+              Desarrollado por <span className="text-[#8B5CF6] font-semibold">Jeremy Masabanda</span>
             </p>
           </div>
         </div>

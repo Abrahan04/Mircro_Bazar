@@ -140,7 +140,7 @@ function Ventas() {
           <h1 className="text-3xl font-bold text-gray-800">Gestión de Ventas</h1>
           <button
             onClick={() => setShowModal(true)}
-            className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition flex items-center space-x-2"
+            className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition flex items-center space-x-2"
           >
             <Plus className="w-5 h-5" />
             <span>Nueva Venta</span>
@@ -157,7 +157,7 @@ function Ventas() {
                 type="date"
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
               />
             </div>
             <div>
@@ -166,7 +166,7 @@ function Ventas() {
                 type="date"
                 value={fechaFin}
                 onChange={(e) => setFechaFin(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
               />
             </div>
             <div className="flex items-end">
@@ -190,7 +190,7 @@ function Ventas() {
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-primary to-secondary text-white">
+            <thead className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white">
               <tr>
                 <th className="px-6 py-4 text-left">Número</th>
                 <th className="px-6 py-4 text-left">Cliente</th>
@@ -230,7 +230,7 @@ function Ventas() {
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="gradient-bg p-6 text-white">
+              <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] p-6 text-white">
                 <h2 className="text-2xl font-bold">Nueva Venta</h2>
               </div>
 
@@ -270,7 +270,7 @@ function Ventas() {
                       <button
                         key={p.id_producto}
                         onClick={() => agregarProductoVenta(p, 1)}
-                        className="p-3 border-2 rounded-lg hover:border-primary transition text-left"
+                        className="p-3 border-2 rounded-lg hover:border-[#8B5CF6] transition text-left"
                       >
                         <p className="font-semibold text-sm">{p.nombre_producto}</p>
                         <p className="text-xs text-gray-600">Stock: {p.stock_actual}</p>
@@ -337,7 +337,7 @@ function Ventas() {
                   </button>
                   <button
                     onClick={registrarVenta}
-                    className="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold"
+                    className="flex-1 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white py-3 rounded-lg font-semibold"
                   >
                     Registrar Venta
                   </button>

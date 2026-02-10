@@ -38,7 +38,7 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen gradient-bg flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Círculos de fondo */}
       <div className="absolute top-20 left-20 w-72 h-72 bg-white opacity-10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-white opacity-10 rounded-full blur-3xl"></div>
@@ -56,7 +56,7 @@ function Login() {
         {/* Card */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in">
           {/* Header */}
-          <div className="gradient-bg p-8 text-center text-white">
+          <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] p-8 text-center text-white">
             <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full mx-auto mb-4 flex items-center justify-center">
               <LogIn className="w-10 h-10" />
             </div>
@@ -79,7 +79,7 @@ function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="test@example.com"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#8B5CF6] focus:outline-none transition"
                 />
               </div>
             </div>
@@ -97,7 +97,7 @@ function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#8B5CF6] focus:outline-none transition"
                 />
               </div>
             </div>
@@ -113,7 +113,7 @@ function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 flex items-center justify-center space-x-2"
+              className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
@@ -134,7 +134,7 @@ function Login() {
                 ¿No tienes una cuenta?{' '}
                 <Link
                   to="/register"
-                  className="text-primary font-semibold hover:underline"
+                  className="text-[#8B5CF6] font-semibold hover:underline"
                 >
                   Regístrate
                 </Link>

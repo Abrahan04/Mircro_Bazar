@@ -98,12 +98,12 @@ function Categorias() {
                     onChange={(e) => setNombre(e.target.value)}
                     required
                     placeholder="Ej: Bebidas"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold hover:shadow-xl transition flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white py-3 rounded-lg font-semibold hover:shadow-xl transition flex items-center justify-center space-x-2"
                 >
                   <Plus className="w-5 h-5" />
                   <span>{editando ? 'Actualizar Categoría' : 'Agregar Categoría'}</span>
@@ -125,7 +125,7 @@ function Categorias() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-primary to-secondary text-white">
+                <thead className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white">
                   <tr>
                     <th className="px-6 py-4 text-left">ID</th>
                     <th className="px-6 py-4 text-left">Nombre</th>

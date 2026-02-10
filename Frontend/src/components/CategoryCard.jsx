@@ -4,12 +4,12 @@ function CategoryCard({ category, onClick, isActive }) {
       onClick={() => onClick(category)}
       className={`flex flex-col items-center p-6 rounded-2xl transition-all duration-300 ${
         isActive 
-          ? 'gradient-bg text-white shadow-2xl scale-105' 
+          ? 'bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white shadow-2xl scale-105' 
           : 'bg-white hover:shadow-xl hover:-translate-y-1'
       }`}
     >
       <div className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl mb-3 ${
-        isActive ? 'bg-white bg-opacity-20' : 'bg-gradient-to-br from-blue-100 to-purple-100'
+        isActive ? 'bg-white bg-opacity-20' : 'bg-gradient-to-br from-[#F5F3FF] to-[#DDD6FE]'
       }`}>
         {category.icono || '📦'}
       </div>

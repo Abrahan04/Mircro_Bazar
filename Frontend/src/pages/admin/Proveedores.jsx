@@ -107,7 +107,7 @@ function Proveedores() {
           <h1 className="text-3xl font-bold text-gray-800">Gestión de Proveedores</h1>
           <button
             onClick={abrirModalNuevo}
-            className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition flex items-center space-x-2"
+            className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition flex items-center space-x-2"
           >
             <Plus className="w-5 h-5" />
             <span>Nuevo Proveedor</span>
@@ -122,14 +122,14 @@ function Proveedores() {
               placeholder="Buscar proveedor..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
             />
           </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-primary to-secondary text-white">
+            <thead className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white">
               <tr>
                 <th className="px-6 py-4 text-left">RUC</th>
                 <th className="px-6 py-4 text-left">Nombre</th>
@@ -170,7 +170,7 @@ function Proveedores() {
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-xl w-full">
-              <div className="gradient-bg p-6 text-white">
+              <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] p-6 text-white">
                 <h2 className="text-2xl font-bold">{editando ? 'Editar Proveedor' : 'Nuevo Proveedor'}</h2>
               </div>
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -212,7 +212,7 @@ function Proveedores() {
                 />
                 <div className="flex gap-3">
                   <button type="button" onClick={cerrarModal} className="flex-1 bg-gray-300 py-3 rounded-lg font-semibold">Cancelar</button>
-                  <button type="submit" className="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold">Guardar</button>
+                  <button type="submit" className="flex-1 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white py-3 rounded-lg font-semibold">Guardar</button>
                 </div>
               </form>
             </div>

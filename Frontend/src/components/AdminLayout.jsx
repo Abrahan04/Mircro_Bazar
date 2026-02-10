@@ -29,7 +29,7 @@ function AdminLayout({ children }) {
       <aside className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white fixed h-screen overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-8">
-            <div className="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] rounded-lg flex items-center justify-center">
               <Package className="w-6 h-6" />
             </div>
             <div>
@@ -47,7 +47,7 @@ function AdminLayout({ children }) {
                   to={item.path}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary text-white shadow-lg'
+                      ? 'bg-[#8B5CF6] text-white shadow-lg'
                       : 'hover:bg-gray-700'
                   }`}
                 >
@@ -90,7 +90,7 @@ function AdminLayout({ children }) {
                   <p className="text-sm font-semibold">{user?.nombre}</p>
                   <p className="text-xs text-gray-500">{user?.rol || 'Administrador'}</p>
                 </div>
-                <div className="w-10 h-10 gradient-bg rounded-full flex items-center justify-center text-white font-bold">
+                <div className="w-10 h-10 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] rounded-full flex items-center justify-center text-white font-bold">
                   {user?.nombre?.charAt(0) || 'A'}
                 </div>
               </div>

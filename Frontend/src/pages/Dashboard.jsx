@@ -27,7 +27,7 @@ function Dashboard() {
 
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 text-white mb-8 animate-fade-in">
+        <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] rounded-2xl p-8 text-white mb-8 animate-fade-in">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-2">
