@@ -121,9 +121,9 @@ const obtenerEstadisticasGenerales = async (req, res) => {
             WHERE stock_actual <= stock_minimo AND estado = true
         `);
         
-        // Total de clientes
+        // Total de clientes (Cualquier usuario que no sea administrador)
         const totalClientes = await pool.query(`
-            SELECT COUNT(*) as total FROM clientes WHERE estado = true
+            SELECT COUNT(*) as total FROM usuarios WHERE rol != 'administrador' AND estado = true
         `);
         
         res.json({

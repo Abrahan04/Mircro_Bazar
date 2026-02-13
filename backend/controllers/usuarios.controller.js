@@ -111,12 +111,12 @@ const registrarUsuario = async (req, res) => {
         // Encriptar contraseña
         const passwordHash = await bcrypt.hash(password, 10);
         
-        // Insertar usuario con rol por defecto 'cliente'
+        // Insertar usuario con rol por defecto 'vendedor' (para compatibilidad con BD)
         const result = await pool.query(
             `INSERT INTO usuarios (nombre_usuario, email, password_hash, rol, estado) 
             VALUES ($1, $2, $3, $4, true) 
             RETURNING id_usuario, nombre_usuario, email, rol, fecha_creacion`,
-            [nombre_usuario, email, passwordHash, rol || 'cliente']
+            [nombre_usuario, email, passwordHash, rol || 'vendedor']
         );
         
         res.status(201).json({
@@ -128,7 +128,7 @@ const registrarUsuario = async (req, res) => {
         console.error('Error al registrar usuario:', error);
         res.status(500).json({ 
             success: false,
-            message: 'Error al registrar usuario' 
+            message: 'Error al registrar usuario: ' + error.message 
         });
     }
 };
