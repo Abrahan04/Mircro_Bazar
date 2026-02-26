@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Navbar from "../components/Navbar.jsx";
 import ProductCard from "../components/ProductCard.jsx";
-import CategoryCard from "../components/CategoryCard.jsx";
 import { Search, TrendingUp, Sparkles } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
@@ -11,7 +10,7 @@ function Home() {
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
   const [filteredProducts, setFilteredProducts] = useState([])
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [selectedCategoryId, setSelectedCategoryId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -21,7 +20,7 @@ function Home() {
 
   useEffect(() => {
     filterProducts()
-  }, [products, selectedCategory, searchTerm])
+  }, [products, selectedCategoryId, searchTerm])
 
   const loadData = async () => {
     try {
@@ -46,8 +45,8 @@ function Home() {
   const filterProducts = () => {
     let filtered = products
 
-    if (selectedCategory) {
-      filtered = filtered.filter(p => p.id_categoria === selectedCategory.id_categoria)
+    if (selectedCategoryId) {
+      filtered = filtered.filter(p => p.id_categoria === parseInt(selectedCategoryId))
     }
 
     if (searchTerm) {
@@ -60,9 +59,8 @@ function Home() {
     setFilteredProducts(filtered)
   }
 
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(selectedCategory?.id_categoria === category.id_categoria ? null : category)
-  }
+  // Helper para obtener el nombre de la categoría seleccionada para el título
+  const selectedCategoryName = categories.find(c => c.id_categoria === parseInt(selectedCategoryId))?.nombre_categoria
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -129,81 +127,81 @@ function Home() {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl font-bold text-gray-800 mb-3">Categorías</h2>
-          <p className="text-gray-600 text-lg">Explora nuestros productos por categoría</p>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
-            {categories.map(category => (
-              <CategoryCard
-                key={category.id_categoria}
-                category={category}
-                onClick={handleCategoryClick}
-                isActive={selectedCategory?.id_categoria === category.id_categoria}
-              />
-            ))}
-          </div>
-        )}
-
-        {selectedCategory && (
-          <div className="mb-8 p-4 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white rounded-xl shadow-lg animate-slide-in">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-2xl font-bold">
-                  {selectedCategory.nombre_categoria}
-                </h3>
-                <p className="opacity-90">
-                  {filteredProducts.length} productos disponibles
-                </p>
-              </div>
+      <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col lg:flex-row gap-8">
+        {/* Sidebar de Categorías (Vertical) */}
+        <aside className="w-full lg:w-64 flex-shrink-0">
+          <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24 animate-fade-in">
+            <h3 className="font-bold text-xl mb-6 text-gray-800 flex items-center gap-2">
+              <TrendingUp size={20} className="text-[#8B5CF6]" />
+              Categorías
+            </h3>
+            <div className="flex flex-col space-y-2">
               <button
-                onClick={() => setSelectedCategory(null)}
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 px-6 py-2 rounded-lg transition"
+                onClick={() => setSelectedCategoryId('')}
+                className={`text-left px-4 py-3 rounded-lg transition-all duration-200 font-medium flex justify-between items-center ${
+                  selectedCategoryId === ''
+                    ? 'bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white shadow-md'
+                    : 'hover:bg-gray-50 text-gray-600'
+                }`}
               >
-                Ver todos
+                <span>Todas</span>
+                {selectedCategoryId === '' && <Sparkles size={16} />}
               </button>
+              
+              {categories.map(cat => (
+                <button
+                  key={cat.id_categoria}
+                  onClick={() => setSelectedCategoryId(cat.id_categoria)}
+                  className={`text-left px-4 py-3 rounded-lg transition-all duration-200 font-medium flex justify-between items-center ${
+                    parseInt(selectedCategoryId) === cat.id_categoria
+                      ? 'bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white shadow-md'
+                      : 'hover:bg-gray-50 text-gray-600'
+                  }`}
+                >
+                  <span>{cat.nombre_categoria}</span>
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    parseInt(selectedCategoryId) === cat.id_categoria
+                      ? 'bg-white bg-opacity-20 text-white'
+                      : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    {cat.cantidad}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
-        )}
-      </section>
+        </aside>
 
-      {/* Products Grid */}
-      <section className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl font-bold text-gray-800 mb-3">
-            {selectedCategory ? selectedCategory.nombre_categoria : 'Todos los Productos'}
-          </h2>
-          <p className="text-gray-600 text-lg">
-            {filteredProducts.length} productos encontrados
-          </p>
-        </div>
-
-        {filteredProducts.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-8xl mb-4">🔍</div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">
-              No se encontraron productos
-            </h3>
+        {/* Products Grid */}
+        <section className="flex-1 pb-20">
+          <div className="mb-8 animate-fade-in">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              {selectedCategoryName || 'Todos los Productos'}
+            </h2>
             <p className="text-gray-600">
-              Intenta con otra búsqueda o categoría
+              {filteredProducts.length} productos encontrados
             </p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map(product => (
-              <ProductCard key={product.id_producto} product={product} />
-            ))}
-          </div>
-        )}
-      </section>
+
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">
+                No se encontraron productos
+              </h3>
+              <p className="text-gray-600">
+                Intenta con otra búsqueda o categoría
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {filteredProducts.map(product => (
+                <ProductCard key={product.id_producto} product={product} />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">

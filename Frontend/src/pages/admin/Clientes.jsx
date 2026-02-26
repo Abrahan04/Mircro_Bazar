@@ -17,15 +17,28 @@ function Clientes() {
   const cargarUsuarios = async () => {
     try {
       const token = localStorage.getItem('token')
-      // Consultamos a /usuarios porque ahí es donde se guardan los registros de la web
-      const response = await axios.get(`${API_URL}/usuarios`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      const config = { headers: { Authorization: `Bearer ${token}` } }
       
-      if (response.data.success) {
+      // Consultamos usuarios y ventas para calcular el total de compras por cliente
+      const [resUsuarios, resVentas] = await Promise.all([
+        axios.get(`${API_URL}/usuarios`, config),
+        axios.get(`${API_URL}/ventas`, config)
+      ])
+      
+      if (resUsuarios.data.success) {
+        const listaVentas = resVentas.data.ventas || []
         // Filtramos para mostrar solo los usuarios que NO son administradores (tus clientes)
-        const listaUsuarios = response.data.usuarios || []
-        const soloClientes = listaUsuarios.filter(u => u.rol !== 'administrador')
+        const listaUsuarios = resUsuarios.data.usuarios || []
+        
+        // Mapeamos para agregar el conteo de compras a cada usuario
+        const soloClientes = listaUsuarios
+          .filter(u => u.rol !== 'administrador')
+          .map(usuario => {
+            // Contamos cuantas ventas tiene este usuario
+            const totalCompras = listaVentas.filter(v => v.id_usuario === usuario.id_usuario).length
+            return { ...usuario, total_compras: totalCompras }
+          })
+
         setUsuarios(soloClientes)
       }
     } catch (error) {
@@ -35,11 +48,15 @@ function Clientes() {
     }
   }
 
-  // Filtrar usuarios por búsqueda
-  const usuariosFiltrados = usuarios.filter(u => 
+  // Lógica de visualización actualizada:
+  // 1. Filtrar por búsqueda primero (nombre o correo)
+  const resultadosBusqueda = usuarios.filter(u => 
     u.nombre_usuario?.toLowerCase().includes(busqueda.toLowerCase()) ||
     u.correo?.toLowerCase().includes(busqueda.toLowerCase())
   )
+
+  // 2. Si NO hay búsqueda, limitar a 5 resultados. Si hay búsqueda, mostrar todos los coincidentes.
+  const usuariosFiltrados = busqueda === '' ? resultadosBusqueda.slice(0, 5) : resultadosBusqueda
 
   return (
     <AdminLayout>
@@ -66,6 +83,7 @@ function Clientes() {
               <tr>
                 <th className="px-6 py-4 text-left">Cliente</th>
                 <th className="px-6 py-4 text-left">Correo</th>
+                <th className="px-6 py-4 text-left">Compras</th>
                 <th className="px-6 py-4 text-left">Rol</th>
                 <th className="px-6 py-4 text-left">Estado</th>
               </tr>
@@ -78,7 +96,7 @@ function Clientes() {
               ) : usuariosFiltrados.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="text-center py-8 text-gray-500">
-                    No se encontraron clientes registrados.
+                    {busqueda ? 'No se encontraron coincidencias.' : 'No hay clientes registrados.'}
                   </td>
                 </tr>
               ) : (
@@ -95,6 +113,11 @@ function Clientes() {
                         <Mail size={16} />
                         {usuario.correo}
                       </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`font-bold ${usuario.total_compras > 5 ? 'text-green-600' : 'text-gray-600'}`}>
+                        {usuario.total_compras}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 w-fit">

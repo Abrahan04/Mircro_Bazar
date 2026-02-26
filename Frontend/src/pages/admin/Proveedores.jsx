@@ -190,10 +190,14 @@ function Proveedores() {
                   className="w-full px-4 py-2 border-2 rounded-lg"
                 />
                 <input
-                  type="tel"
+                  type="text"
+                  maxLength={10}
                   placeholder="Teléfono"
                   value={formData.telefono}
-                  onChange={(e) => setFormData({...formData, telefono: e.target.value})}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, '');
+                    if (val.length <= 10) setFormData({...formData, telefono: val})
+                  }}
                   className="w-full px-4 py-2 border-2 rounded-lg"
                 />
                 <input

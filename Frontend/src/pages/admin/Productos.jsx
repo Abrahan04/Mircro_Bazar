@@ -96,6 +96,15 @@ function Productos() {
     } catch (error) {
       console.error('Error completo:', error)
       alert('❌ Error: ' + (error.response?.data?.message || error.message || 'Error al guardar'))
+      
+      const mensaje = error.response?.data?.message || error.message || 'Error al guardar';
+
+      // Detectar si el error es por código duplicado (común en bases de datos)
+      if (mensaje.toLowerCase().includes('duplicate') || mensaje.toLowerCase().includes('unique') || mensaje.toLowerCase().includes('ya existe')) {
+        alert('⚠️ El CÓDIGO del producto ya existe. Por favor verifica que no esté repetido e intenta con otro.');
+      } else {
+        alert('❌ Error: ' + mensaje);
+      }
     }
   }
 
@@ -376,8 +385,12 @@ function Productos() {
                     <input
                       type="number"
                       step="0.01"
+                      min="0"
                       value={formData.precio_compra}
-                      onChange={(e) => setFormData({...formData, precio_compra: e.target.value})}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '' || parseFloat(val) >= 0) setFormData({...formData, precio_compra: val})
+                      }}
                       required
                       className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
@@ -387,8 +400,12 @@ function Productos() {
                     <input
                       type="number"
                       step="0.01"
+                      min="0"
                       value={formData.precio_venta}
-                      onChange={(e) => setFormData({...formData, precio_venta: e.target.value})}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '' || parseFloat(val) >= 0) setFormData({...formData, precio_venta: val})
+                      }}
                       required
                       className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
@@ -400,8 +417,12 @@ function Productos() {
                     <label className="block text-sm font-semibold mb-2">Stock Actual *</label>
                     <input
                       type="number"
+                      min="0"
                       value={formData.stock_actual}
-                      onChange={(e) => setFormData({...formData, stock_actual: e.target.value})}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '' || parseFloat(val) >= 0) setFormData({...formData, stock_actual: val})
+                      }}
                       required
                       className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />
@@ -410,8 +431,12 @@ function Productos() {
                     <label className="block text-sm font-semibold mb-2">Stock Mínimo *</label>
                     <input
                       type="number"
+                      min="0"
                       value={formData.stock_minimo}
-                      onChange={(e) => setFormData({...formData, stock_minimo: e.target.value})}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '' || parseFloat(val) >= 0) setFormData({...formData, stock_minimo: val})
+                      }}
                       required
                       className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#8B5CF6] focus:outline-none"
                     />

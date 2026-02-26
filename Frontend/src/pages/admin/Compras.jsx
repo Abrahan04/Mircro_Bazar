@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Plus } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import AdminLayout from '../../components/AdminLayout'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
@@ -14,6 +14,7 @@ function Compras() {
   const [proveedorSeleccionado, setProveedorSeleccionado] = useState('')
   const [productoCantidades, setProductoCantidades] = useState({})
   const [productoPreciosCompra, setProductoPreciosCompra] = useState({})
+  const [busquedaProducto, setBusquedaProducto] = useState('')
 
   useEffect(() => {
     cargarCompras()
@@ -184,8 +185,25 @@ function Compras() {
 
                 <div>
                   <h3 className="font-bold mb-2">Seleccionar Productos</h3>
+                  
+                  {/* Barra de búsqueda de productos */}
+                  <div className="relative mb-3">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      placeholder="Buscar producto por nombre..."
+                      value={busquedaProducto}
+                      onChange={(e) => setBusquedaProducto(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:border-[#8B5CF6] focus:outline-none text-sm"
+                    />
+                  </div>
+
                   <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-lg p-2">
-                    {productos.map(p => (
+                    {!busquedaProducto ? (
+                      <p className="col-span-3 text-center text-gray-500 py-8">Escribe el nombre del producto para buscar...</p>
+                    ) : productos
+                      .filter(p => p.nombre_producto.toLowerCase().includes(busquedaProducto.toLowerCase()))
+                      .map(p => (
                       <div key={p.id_producto} className="p-3 border-2 rounded-lg">
                         <p className="font-semibold text-sm">{p.nombre_producto}</p>
                         <input

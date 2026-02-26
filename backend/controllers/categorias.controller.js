@@ -58,6 +58,13 @@ const actualizarCategoria = async (req, res) => {
     const { nombre_categoria, descripcion } = req.body;
     
     try {
+        if (!nombre_categoria) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'El nombre de la categoría es requerido' 
+            });
+        }
+
         const result = await pool.query(
             `UPDATE categorias 
              SET nombre_categoria = $1, descripcion = $2 
@@ -79,9 +86,17 @@ const actualizarCategoria = async (req, res) => {
         });
     } catch (error) {
         console.error('Error al actualizar categoría:', error);
+        
+        if (error.code === '23505') {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Ya existe una categoría con ese nombre' 
+            });
+        }
+
         res.status(500).json({ 
             success: false,
-            message: 'Error al actualizar categoría' 
+            message: 'Error al actualizar categoría: ' + error.message 
         });
     }
 };

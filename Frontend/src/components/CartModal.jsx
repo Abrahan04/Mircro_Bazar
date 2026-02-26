@@ -90,9 +90,17 @@ function CartModal({ isOpen, onClose }) {
                   key={item.id_producto} 
                   className="flex items-center space-x-4 p-4 border border-gray-200 rounded-xl hover:shadow-md transition"
                 >
-                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
-                    📦
-                  </div>
+                  {item.imagen_url ? (
+                    <img 
+                      src={`http://localhost:3000${item.imagen_url}`} 
+                      alt={item.nombre_producto}
+                      className="w-20 h-20 object-contain bg-white rounded-lg border border-gray-200"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
+                      📦
+                    </div>
+                  )}
                   
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-800">{item.nombre_producto}</h4>

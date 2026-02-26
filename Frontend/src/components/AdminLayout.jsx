@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Package, Tag, Users, Truck, ShoppingCart, ShoppingBag, BarChart3, LogOut, Home } from 'lucide-react'
+import { LayoutDashboard, Package, Tag, Users, Truck, ShoppingCart, ShoppingBag, BarChart3, LogOut, Home, Menu, X } from 'lucide-react'
 import { useAuth } from '../App'
 
 function AdminLayout({ children }) {
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const menuItems = [
     { path: '/admin/dashboard', icon: <LayoutDashboard />, label: 'Dashboard' },
@@ -25,10 +27,19 @@ function AdminLayout({ children }) {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* Overlay para móvil (fondo oscuro cuando el menú está abierto) */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white fixed h-screen overflow-y-auto">
-        <div className="p-6">
-          <div className="flex items-center space-x-3 mb-8">
+      <aside className={`w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white fixed h-screen overflow-y-auto z-50 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        <div className="p-6 relative">
+          <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4 md:hidden text-gray-400 hover:text-white"><X size={20} /></button>
+          <div className="flex items-center space-x-3 mb-8 mt-2 md:mt-0">
             <div className="w-10 h-10 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] rounded-lg flex items-center justify-center">
               <Package className="w-6 h-6" />
             </div>
@@ -78,13 +89,16 @@ function AdminLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="ml-64 flex-1">
+      <main className="flex-1 md:ml-64 transition-all duration-300">
         <div className="bg-white border-b">
           <div className="px-8 py-4">
             <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold text-gray-800">
-                Panel de Administración
-              </h1>
+              <div className="flex items-center gap-4">
+                <button onClick={() => setSidebarOpen(true)} className="md:hidden text-gray-600"><Menu size={24} /></button>
+                <h1 className="text-xl font-semibold text-gray-800">
+                  Panel de Administración
+                </h1>
+              </div>
               <div className="flex items-center space-x-3">
                 <div className="text-right">
                   <p className="text-sm font-semibold">{user?.nombre}</p>

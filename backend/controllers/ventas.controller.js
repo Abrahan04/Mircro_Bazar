@@ -4,10 +4,13 @@ const pool = require('../database/db');
 const obtenerVentas = async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT v.*, c.nombre_cliente, u.nombre_usuario
+            SELECT v.*, 
+                   COALESCE(c.nombre_cliente, u_cliente.nombre_usuario) as nombre_cliente,
+                   u.nombre_usuario
             FROM ventas v
             LEFT JOIN clientes c ON v.id_cliente = c.id_cliente
             LEFT JOIN usuarios u ON v.id_usuario = u.id_usuario
+            LEFT JOIN usuarios u_cliente ON v.id_cliente = u_cliente.id_usuario
             ORDER BY v.fecha_venta DESC
         `);
         
@@ -97,7 +100,9 @@ const crearVenta = async (req, res) => {
         
         // Generar número de venta
         const numero_venta = `VENT-${Date.now()}`;
-        
+
+
+ 
         // Insertar venta
         const ventaResult = await client.query(
             `INSERT INTO ventas (numero_venta, id_cliente, id_usuario, subtotal, descuento, total_venta, metodo_pago, observaciones) 
@@ -107,11 +112,14 @@ const crearVenta = async (req, res) => {
         
         const id_venta = ventaResult.rows[0].id_venta;
         
+        // Array para acumular los detalles con nombres y devolverlos al frontend
+        const detallesRegistrados = [];
+
         // Insertar detalles de la venta
         for (const producto of productos) {
-            // Verificar stock disponible
+            // Verificar stock disponible y obtener el nombre del producto
             const stockCheck = await client.query(
-                'SELECT stock_actual FROM productos WHERE id_producto = $1',
+                'SELECT stock_actual, nombre_producto FROM productos WHERE id_producto = $1',
                 [producto.id_producto]
             );
             
@@ -119,6 +127,12 @@ const crearVenta = async (req, res) => {
                 throw new Error(`Stock insuficiente para el producto ID ${producto.id_producto}`);
             }
             
+            // Agregamos el detalle a nuestra lista de respuesta
+            detallesRegistrados.push({
+                ...producto,
+                nombre_producto: stockCheck.rows[0].nombre_producto
+            });
+
             await client.query(
                 `INSERT INTO detalle_ventas (id_venta, id_producto, cantidad, precio_unitario) 
                  VALUES ($1, $2, $3, $4)`,
@@ -131,11 +145,23 @@ const crearVenta = async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'Venta registrada exitosamente',
-            venta: ventaResult.rows[0]
+            venta: {
+                ...ventaResult.rows[0],
+                detalles: detallesRegistrados
+            }
         });
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('Error al crear venta:', error);
+        
+        // Detectar específicamente el error de llave foránea para dar un mensaje claro
+        if (error.code === '23503' && error.constraint === 'ventas_id_cliente_fkey') {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Error de Base de Datos: No se puede registrar la venta porque existe una restricción (ventas_id_cliente_fkey). Ejecuta: ALTER TABLE ventas DROP CONSTRAINT ventas_id_cliente_fkey;' 
+            });
+        }
+
         res.status(500).json({ 
             success: false,
             message: error.message || 'Error al crear venta' 

@@ -77,7 +77,7 @@ const login = async (req, res) => {
     }
 };
 
-// Registrar usuario (público y admin)
+// Registrar usuario (público)
 const registrarUsuario = async (req, res) => {
     // Aceptar ambos formatos de parámetros (frontend y admin)
     const nombre_usuario = req.body.nombre_usuario || req.body.nombre;

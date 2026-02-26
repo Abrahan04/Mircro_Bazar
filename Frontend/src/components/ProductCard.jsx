@@ -19,7 +19,7 @@ function ProductCard({ product }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover animate-fade-in group">
       {/* Imagen del producto */}
-      <div className="relative h-56 bg-white flex items-center justify-center overflow-hidden border-b border-gray-100">
+      <div className="relative h-48 bg-white flex items-center justify-center overflow-hidden border-b border-gray-100">
         {product.imagen_url ? (
           <img 
             src={`http://localhost:3000${product.imagen_url}`}
@@ -45,11 +45,11 @@ function ProductCard({ product }) {
       </div>
 
       {/* Contenido */}
-      <div className="p-5">
+      <div className="p-4">
         <p className="text-xs text-[#8B5CF6] font-semibold mb-1">
           {product.nombre_categoria || 'Sin categoría'}
         </p>
-        <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">
+        <h3 className="text-base font-bold text-gray-800 mb-2 line-clamp-2">
           {product.nombre_producto}
         </h3>
         <p className="text-sm text-gray-600 mb-4 line-clamp-2 h-10">
@@ -58,7 +58,7 @@ function ProductCard({ product }) {
 
         {/* Precio */}
         <div className="flex items-center justify-between mb-4">
-          <span className="text-3xl font-bold text-green-600">
+          <span className="text-2xl font-bold text-green-600">
             ${parseFloat(product.precio_venta).toFixed(2)}
           </span>
         </div>
@@ -70,8 +70,14 @@ function ProductCard({ product }) {
             min="1"
             max={product.stock_actual}
             value={quantity}
-            onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-            className="w-20 px-3 py-2 border-2 border-gray-200 rounded-lg text-center focus:border-[#8B5CF6] focus:outline-none"
+            onChange={(e) => {
+              // Controlar que solo se ingresen números positivos y dentro del stock
+              const val = parseInt(e.target.value) || 0;
+              if (val >= 0 && val <= product.stock_actual) {
+                setQuantity(val);
+              }
+            }}
+            className="w-16 px-2 py-2 border-2 border-gray-200 rounded-lg text-center focus:border-[#8B5CF6] focus:outline-none"
           />
           <button
             onClick={handleAddToCart}
